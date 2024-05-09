@@ -5,6 +5,7 @@ import helpers.AddressGenerator;
 import helpers.EmailGenerator;
 import helpers.NameAndLastNameGenerator;
 import helpers.PhoneNumberGenerator;
+import jdk.jfr.Description;
 import models.ContactModel;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -13,8 +14,7 @@ import screens.ContactListScreen;
 import screens.EditScreen;
 import screens.SplashScreen;
 
-public class RemoveContactTest extends AppiumConfig {
-
+public class EditContactTest extends AppiumConfig {
     @BeforeTest
     public void precondition(){
         ContactListScreen listScreen = new SplashScreen(driver)
@@ -24,30 +24,7 @@ public class RemoveContactTest extends AppiumConfig {
                 .clickByLoginButton();
     }
     @Test
-    public void removeContact(){
-        ContactListScreen listScreen = new ContactListScreen(driver);
-
-        ContactModel contact = new ContactModel(NameAndLastNameGenerator.generateName()
-                , NameAndLastNameGenerator.generateLastName(),
-                PhoneNumberGenerator.generatePhoneNumber(),
-                EmailGenerator.generateEmail(3,3,3),
-                AddressGenerator.generateAddress(),"Descr");
-
-        listScreen.openNewContactForm().fillTheForm(contact).createContact();
-
-        Assert.assertTrue(listScreen.removeAContact().isContactRemoved());
-
-    }
-    @Test
-    public void removeAllContacts(){
-        ContactListScreen listScreen = new ContactListScreen(driver);
-        Assert.assertTrue(listScreen.removeAllContacts().isNoContactsMessage());
-
-    }
-
-    //editContact
-    @Test
-    public void editContact(){
+    public void editContactTest(){
 
         ContactModel contact = new ContactModel(NameAndLastNameGenerator.generateName()
                 , NameAndLastNameGenerator.generateLastName(),
@@ -56,7 +33,7 @@ public class RemoveContactTest extends AppiumConfig {
                 AddressGenerator.generateAddress(),"Descr");
 
         ContactListScreen listScreen = new ContactListScreen(driver);
-        listScreen.editAContact("Darren Hart","6511164077");
+        listScreen.editAContact("Bill Foster","6344773698782");
 
         EditScreen editScreen = new EditScreen(driver);
 
@@ -68,4 +45,15 @@ public class RemoveContactTest extends AppiumConfig {
         Assert.assertNotEquals(contact,contactToSave);
 
     }
+    @Test
+    public void editContactMailPositive(){
+        String text = "updatedMail@mail.com";
+
+        Assert.assertTrue(new ContactListScreen(driver).
+                editOneContact().
+                editEmailField(text).
+                submitChanges().isContactContainsText(text));
+    }
 }
+
+

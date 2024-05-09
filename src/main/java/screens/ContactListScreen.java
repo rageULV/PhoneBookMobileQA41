@@ -89,6 +89,29 @@ public class ContactListScreen extends BaseScreen{
         }
         return this;
     }
+    public ContactListScreen editAContact(String name,String phoneNumber){
+        waitForAnElement(addButton);
+        List<MobileElement> contacts = this.contacts;
+
+        for (MobileElement contact : contacts) {
+            String contactName = contact.findElement(By.id("com.sheygam.contactapp:id/rowName")).getText();
+            String contactPhoneNumber = contact.findElement(By.id("com.sheygam.contactapp:id/rowPhone")).getText();
+
+            if (contactName.equals(name) && contactPhoneNumber.equals(phoneNumber))
+            {
+                Rectangle rectangle = contact.getRect();
+                int xEnd = rectangle.getX()+rectangle.getWidth()/8;
+                int y = rectangle.getY()+rectangle.getHeight()/2;
+                int xStart = xEnd + rectangle.getWidth()*6/8;
+
+                new TouchAction<>(driver).longPress(PointOption.point(xStart,y))
+                        .moveTo(PointOption.point(xEnd,y))
+                        .release()
+                        .perform();
+            }
+        }
+        return this;
+    }
     public boolean isContactRemoved(){
         return !rowPhone.contains(phoneNumber);
     }
@@ -103,5 +126,63 @@ public class ContactListScreen extends BaseScreen{
         return isElementPresent(emptyListMessage, "No Contacts");
     }
 
+    public EditScreen editOneContact() {
+        waitForAnElement(addButton);
+        MobileElement contact = contacts.get(0);
 
+        Rectangle rectangle = contact.getRect();
+        int xStart = rectangle.getX() + rectangle.getWidth() * 7 / 8;
+        int xEnd = xStart - rectangle.getWidth() * 6 / 8;
+        int y = rectangle.getY() + rectangle.getHeight() / 2;
+
+        new TouchAction<>(driver)
+                .longPress(PointOption.point(xStart, y))
+                .moveTo(PointOption.point(xEnd, y))
+                .release()
+                .perform();
+        return new EditScreen(driver);
+    }
+    public boolean isContactContainsText(String text){
+        contacts.get(0).click();
+        ContactModel contact = new ViewContactScreen(driver).viewContactObject();
+        driver.navigate().back();
+        return contact.toString().contains(text);
+    }
+    //--------------------------------------------------------------------------
+    public ContactListScreen scrollingDown(){
+        waitForAnElement(addButton);
+        MobileElement contact = contacts.get(contacts.size()-1);
+        Rectangle rectangle = contact.getRect();
+        int x = rectangle.getX()+rectangle.getWidth()/2;
+        int y = rectangle.getY()+rectangle.getHeight()/2;
+
+        new TouchAction<>(driver)
+                .longPress(PointOption.point(x,y))
+                .moveTo(PointOption.point(x, 0))
+                .release()
+                .perform();
+        return this;
+    }
+    public boolean isTheEndOfTheList(){
+        waitForAnElement(addButton);
+        String beforeScroll = getLastContact();
+        scrollingDown();
+        String afterScroll = getLastContact();
+        return beforeScroll.equals(afterScroll);
+    }
+    private String getLastContact(){
+        return rowName.get(rowName.size()-1).getText()
+                +" "+
+                rowPhone.get(rowPhone.size()-1).getText();
+    }
+    public boolean isContactAddedScroll(ContactModel contact) {
+        boolean result = false;
+        while(!result && !isTheEndOfTheList()){
+            boolean checkName = checkContainsText(rowName, contact.getName());
+            boolean checkPhone = checkContainsText(rowPhone, contact.getPhone());
+            result = checkName && checkPhone;
+            if(!result){scrollingDown();}
+        }
+        return result;
+    }
 }
