@@ -108,6 +108,7 @@ public class ContactListScreen extends BaseScreen{
                         .moveTo(PointOption.point(xEnd,y))
                         .release()
                         .perform();
+                break;
             }
         }
         return this;

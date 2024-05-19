@@ -3,12 +3,18 @@ package config;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class AppiumConfig {
@@ -34,6 +40,20 @@ public class AppiumConfig {
     }
     @AfterSuite
     public void tearDown(){
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
+//        String currentDate = dateFormat.format(new Date());
+//        String fileName = "logs"+currentDate+".log";
+//        try{
+//            FileWriter writer = new FileWriter(fileName);
+//            LogEntries logEntries = driver.manage().logs().get("logcat");
+//            for(LogEntry entry: logEntries){
+//                writer.write(entry.getMessage()+"\n");
+//            }
+//            writer.close();
+//            System.out.println("The log file has been saved.");
+//        }
+//        catch (IOException e){e.printStackTrace();}
         driver.quit();
     }
+
 }

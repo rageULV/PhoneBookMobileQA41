@@ -32,13 +32,16 @@ public class EditContactTest extends AppiumConfig {
                 EmailGenerator.generateEmail(3,3,3),
                 AddressGenerator.generateAddress(),"Descr");
 
+
         ContactListScreen listScreen = new ContactListScreen(driver);
-        listScreen.editAContact("Bill Foster","6344773698782");
+        listScreen.editAContact("Ricardo Palmer","308056066299");
 
         EditScreen editScreen = new EditScreen(driver);
 
+
         editScreen.makeSureWeAreLoaded();
         ContactModel contactToSave = editScreen.saveContactForNow();
+        System.out.println("2");
 
         editScreen.fillTheFieldsWithNewContact(contact).saveEditedContact();
 
